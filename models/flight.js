@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema; // optional shortcut to the mongoose.Schema class
+const Schema = mongoose.Schema;
 
-// this schema will be embedded in the flightSchema
-// a destination belongs to a flight
 const destinationSchema = new Schema({
   airport: {
     type: String,
@@ -10,11 +8,14 @@ const destinationSchema = new Schema({
   },
   arrival: {
     type: Date,
+    default: function () {
+      let result = new Date();
+      result.setFullYear(result.getFullYear() + 1);
+      return result;
+    },
   },
 });
 
-// defines what the "documents" aka the objects
-// look like in our MongoDB Collection
 const flightSchema = new Schema({
   airline: {
     type: String,
@@ -38,11 +39,9 @@ const flightSchema = new Schema({
       result.setFullYear(result.getFullYear() + 1);
       return result;
     },
-    destination: [destinationSchema],
   },
+
+  destination: [destinationSchema],
 });
 
-// Compile the schema into a Model object and export it
-module.exports = mongoose.model("Flight", flightSchema); // < this line creates the model
-// It also creates 'movies' collection in mongoDB
-// lowercase and plural of whatever our model name is
+module.exports = mongoose.model("Flight", flightSchema);
